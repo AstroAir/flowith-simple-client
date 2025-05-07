@@ -20,6 +20,7 @@ import {
   Clock,
   Trash2,
   Download,
+  Plus,
 } from "lucide-react";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useTheme } from "@/components/theme-provider";
@@ -34,6 +35,12 @@ import AdvancedSearch from "@/components/search/advanced-search";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import {
+  PageContainer,
+  PageTitle,
+  PageSection,
+  PageGrid,
+} from "@/components/layout/page-container";
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useLocalStorage<UploadedDocument[]>(
@@ -189,42 +196,47 @@ export default function DocumentsPage() {
     );
   };
 
-  return (
-    <div className="container mx-auto py-6">
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">Documents</h1>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-            >
-              {viewMode === "grid" ? (
-                <List className="h-4 w-4" />
-              ) : (
-                <Grid className="h-4 w-4" />
-              )}
-            </Button>
-            <BatchDocumentProcessor
-              token={token}
-              onDocumentsUploaded={handleBatchDocumentsUploaded}
-            />
-            <DocumentUploader
-              token={token}
-              onDocumentUploaded={handleDocumentUploaded}
-            />
-          </div>
-        </div>
+  const uploadActions = (
+    <>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+      >
+        {viewMode === "grid" ? (
+          <List className="h-4 w-4" />
+        ) : (
+          <Grid className="h-4 w-4" />
+        )}
+      </Button>
+      <BatchDocumentProcessor
+        token={token}
+        onDocumentsUploaded={handleBatchDocumentsUploaded}
+      />
+      <DocumentUploader
+        token={token}
+        onDocumentUploaded={handleDocumentUploaded}
+      />
+    </>
+  );
 
+  return (
+    <PageContainer>
+      <PageTitle
+        title="文档库"
+        description="管理和组织您的知识文档"
+        actions={uploadActions}
+      />
+
+      <PageSection noPadding>
         <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
             <TabsList>
-              <TabsTrigger value="all">All Documents</TabsTrigger>
-              <TabsTrigger value="ready">Ready</TabsTrigger>
-              <TabsTrigger value="processing">Processing</TabsTrigger>
-              <TabsTrigger value="uploading">Uploading</TabsTrigger>
-              <TabsTrigger value="error">Error</TabsTrigger>
+              <TabsTrigger value="all">全部文档</TabsTrigger>
+              <TabsTrigger value="ready">就绪</TabsTrigger>
+              <TabsTrigger value="processing">处理中</TabsTrigger>
+              <TabsTrigger value="uploading">上传中</TabsTrigger>
+              <TabsTrigger value="error">错误</TabsTrigger>
             </TabsList>
 
             <div className="flex items-center gap-2">
@@ -235,22 +247,24 @@ export default function DocumentsPage() {
                   onClick={deleteSelectedDocuments}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
-                  Delete Selected
+                  删除选中项
                 </Button>
               )}
               <Button variant="outline" size="sm" onClick={selectAllDocuments}>
                 {selectedDocuments.length === filteredDocuments.length
-                  ? "Deselect All"
-                  : "Select All"}
+                  ? "取消全选"
+                  : "全选"}
               </Button>
             </div>
           </div>
 
-          <AdvancedSearch
-            documents={documents}
-            documentTags={documentTags}
-            onFilteredDocuments={setFilteredDocuments}
-          />
+          <PageSection className="mb-6">
+            <AdvancedSearch
+              documents={documents}
+              documentTags={documentTags}
+              onFilteredDocuments={setFilteredDocuments}
+            />
+          </PageSection>
 
           <TabsContent value="all" className="mt-0">
             <DocumentsContent
@@ -332,8 +346,8 @@ export default function DocumentsPage() {
             />
           </TabsContent>
         </Tabs>
-      </div>
-    </div>
+      </PageSection>
+    </PageContainer>
   );
 }
 
@@ -367,7 +381,7 @@ function DocumentsContent({
   if (isLoading) {
     return (
       <div
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${
+        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${
           viewMode === "grid" ? "3" : "1"
         } gap-4`}
       >
@@ -395,15 +409,14 @@ function DocumentsContent({
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <FileText className="h-16 w-16 text-muted-foreground mb-4 opacity-20" />
-        <h3 className="text-xl font-medium mb-2">No documents found</h3>
+        <h3 className="text-xl font-medium mb-2">暂无文档</h3>
         <p className="text-muted-foreground max-w-md">
-          Upload documents to your knowledge base to start analyzing and
-          retrieving information.
+          上传文档到您的知识库以开始分析和检索信息。
         </p>
         <Button className="mt-6" asChild>
           <label>
             <Upload className="h-4 w-4 mr-2" />
-            Upload Document
+            上传文档
             <input type="file" className="hidden" />
           </label>
         </Button>
@@ -415,7 +428,7 @@ function DocumentsContent({
     <div
       className={
         viewMode === "grid"
-          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
           : "flex flex-col space-y-4"
       }
     >
@@ -453,7 +466,13 @@ function DocumentsContent({
                       : "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
                   }`}
                 >
-                  {doc.status}
+                  {doc.status === "ready"
+                    ? "就绪"
+                    : doc.status === "processing"
+                    ? "处理中"
+                    : doc.status === "uploading"
+                    ? "上传中"
+                    : "错误"}
                 </Badge>
               </div>
             </CardHeader>
@@ -468,14 +487,12 @@ function DocumentsContent({
                   ))}
                   {documentTags[doc.id].length > 3 && (
                     <Badge variant="outline" className="text-xs">
-                      +{documentTags[doc.id].length - 3} more
+                      +{documentTags[doc.id].length - 3} 更多
                     </Badge>
                   )}
                 </div>
               ) : (
-                <div className="text-xs text-muted-foreground mb-2">
-                  No tags
-                </div>
+                <div className="text-xs text-muted-foreground mb-2">无标签</div>
               )}
 
               {viewMode === "list" && (
@@ -493,7 +510,7 @@ function DocumentsContent({
                   size="sm"
                   onClick={() => toggleSelectDocument(doc.id)}
                 >
-                  {selectedDocuments.includes(doc.id) ? "Deselect" : "Select"}
+                  {selectedDocuments.includes(doc.id) ? "取消选择" : "选择"}
                 </Button>
                 {doc.status === "ready" && (
                   <DocumentPreview document={doc} token={token} />

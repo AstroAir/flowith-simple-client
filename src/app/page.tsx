@@ -1104,297 +1104,313 @@ function DashboardContent({
   documentTags: Record<string, string[]>;
 }) {
   return (
-    <AnimatedContainer>
+    <AnimatedContainer type="fade">
       <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">仪表盘</h1>
         <p className="text-muted-foreground">
-          Welcome to your AI Knowledge Retrieval dashboard.
+          欢迎使用您的 AI 知识检索仪表盘
         </p>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Documents
-              </CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">1,284</div>
-              <p className="text-xs text-muted-foreground">
-                +24 from last week
-              </p>
-            </CardContent>
-          </Card>
+          <AnimatedContainer type="scale" delay={0.1}>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  文档总数
+                </CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{documents.length || 1284}</div>
+                <p className="text-xs text-muted-foreground">
+                  较上周增加 24
+                </p>
+              </CardContent>
+            </Card>
+          </AnimatedContainer>
 
-          <Card className="col-span-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Active Users
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">42</div>
-              <p className="text-xs text-muted-foreground">+5 from last week</p>
-            </CardContent>
-          </Card>
+          <AnimatedContainer type="scale" delay={0.2}>
+            <Card className="col-span-1">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  活跃用户
+                </CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">42</div>
+                <p className="text-xs text-muted-foreground">较上周增加 5</p>
+              </CardContent>
+            </Card>
+          </AnimatedContainer>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Searches</CardTitle>
-              <Search className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">2,845</div>
-              <p className="text-xs text-muted-foreground">
-                +12.5% from last month
-              </p>
-            </CardContent>
-          </Card>
+          <AnimatedContainer type="scale" delay={0.3}>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">搜索次数</CardTitle>
+                <Search className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">2,845</div>
+                <p className="text-xs text-muted-foreground">
+                  较上月增长 12.5%
+                </p>
+              </CardContent>
+            </Card>
+          </AnimatedContainer>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Uploads</CardTitle>
-              <Upload className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">573</div>
-              <p className="text-xs text-muted-foreground">
-                +7% from last month
-              </p>
-            </CardContent>
-          </Card>
+          <AnimatedContainer type="scale" delay={0.4}>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">上传数量</CardTitle>
+                <Upload className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">573</div>
+                <p className="text-xs text-muted-foreground">
+                  较上月增长 7%
+                </p>
+              </CardContent>
+            </Card>
+          </AnimatedContainer>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="activity">Activity</TabsTrigger>
+            <TabsTrigger value="overview">概览</TabsTrigger>
+            <TabsTrigger value="analytics">分析</TabsTrigger>
+            <TabsTrigger value="activity">活动</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4">
-                <CardHeader>
-                  <CardTitle>Data Insights</CardTitle>
-                  <CardDescription>
-                    Visualization of your knowledge base usage and trends.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pl-2">
-                  <Suspense
-                    fallback={<Skeleton className="h-[300px] w-full" />}
-                  >
-                    <LazyLoadWrapper>
-                      <DataInsights
-                        sessions={sessions}
-                        documents={documents}
-                        documentTags={documentTags}
-                      />
-                    </LazyLoadWrapper>
-                  </Suspense>
-                </CardContent>
-              </Card>
+            <AnimatedContainer type="slide" direction="up" delay={0.2}>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <Card className="col-span-4">
+                  <CardHeader>
+                    <CardTitle>数据洞察</CardTitle>
+                    <CardDescription>
+                      知识库使用情况和趋势可视化
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pl-2">
+                    <Suspense
+                      fallback={<Skeleton className="h-[300px] w-full" />}
+                    >
+                      <LazyLoadWrapper>
+                        <DataInsights
+                          sessions={sessions}
+                          documents={documents}
+                          documentTags={documentTags}
+                        />
+                      </LazyLoadWrapper>
+                    </Suspense>
+                  </CardContent>
+                </Card>
 
-              <Card className="col-span-3">
-                <CardHeader>
-                  <CardTitle>Recommendations</CardTitle>
-                  <CardDescription>
-                    Personalized content based on your usage patterns.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Suspense
-                    fallback={<Skeleton className="h-[200px] w-full" />}
-                  >
-                    <LazyLoadWrapper>
-                      <ContentRecommendations
-                        sessions={sessions}
-                        documents={documents}
-                        documentTags={documentTags}
-                      />
-                    </LazyLoadWrapper>
-                  </Suspense>
-                </CardContent>
-              </Card>
-            </div>
+                <Card className="col-span-3">
+                  <CardHeader>
+                    <CardTitle>推荐内容</CardTitle>
+                    <CardDescription>
+                      基于您的使用模式的个性化内容
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Suspense
+                      fallback={<Skeleton className="h-[200px] w-full" />}
+                    >
+                      <LazyLoadWrapper>
+                        <ContentRecommendations
+                          sessions={sessions}
+                          documents={documents}
+                          documentTags={documentTags}
+                        />
+                      </LazyLoadWrapper>
+                    </Suspense>
+                  </CardContent>
+                </Card>
+              </div>
+            </AnimatedContainer>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Recent Activity
-                  </CardTitle>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <Suspense
-                    fallback={<Skeleton className="h-[200px] w-full" />}
-                  >
-                    <LazyLoadWrapper>
-                      <RealTimeUpdates
-                        users={[
-                          {
-                            id: "1",
-                            name: "用户1",
-                            email: "user1@example.com",
-                            role: "admin",
-                            status: "active",
-                            lastActive: new Date().toISOString(),
-                            permissions: {
-                              canCreateKb: true,
-                              canEditKb: true,
-                              canDeleteKb: true,
-                              canUploadDocs: true,
-                              canDeleteDocs: true,
-                              canManageUsers: true,
-                              canExportData: true,
+            <AnimatedContainer type="slide" direction="up" delay={0.3}>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      最近活动
+                    </CardTitle>
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <Suspense
+                      fallback={<Skeleton className="h-[200px] w-full" />}
+                    >
+                      <LazyLoadWrapper>
+                        <RealTimeUpdates
+                          users={[
+                            {
+                              id: "1",
+                              name: "用户1",
+                              email: "user1@example.com",
+                              role: "admin",
+                              status: "active",
+                              lastActive: new Date().toISOString(),
+                              permissions: {
+                                canCreateKb: true,
+                                canEditKb: true,
+                                canDeleteKb: true,
+                                canUploadDocs: true,
+                                canDeleteDocs: true,
+                                canManageUsers: true,
+                                canExportData: true,
+                              },
                             },
-                          },
-                          {
-                            id: "2",
-                            name: "用户2",
-                            email: "user2@example.com",
-                            role: "manager",
-                            status: "active",
-                            lastActive: new Date().toISOString(),
-                            permissions: {
-                              canCreateKb: true,
-                              canEditKb: true,
-                              canDeleteKb: true,
-                              canUploadDocs: true,
-                              canDeleteDocs: true,
-                              canManageUsers: false,
-                              canExportData: true,
+                            {
+                              id: "2",
+                              name: "用户2",
+                              email: "user2@example.com",
+                              role: "manager",
+                              status: "active",
+                              lastActive: new Date().toISOString(),
+                              permissions: {
+                                canCreateKb: true,
+                                canEditKb: true,
+                                canDeleteKb: true,
+                                canUploadDocs: true,
+                                canDeleteDocs: true,
+                                canManageUsers: false,
+                                canExportData: true,
+                              },
                             },
-                          },
-                          {
-                            id: "3",
-                            name: "用户3",
-                            email: "user3@example.com",
-                            role: "viewer",
-                            status: "pending",
-                            lastActive: new Date().toISOString(),
-                            permissions: {
-                              canCreateKb: false,
-                              canEditKb: false,
-                              canDeleteKb: false,
-                              canUploadDocs: false,
-                              canDeleteDocs: false,
-                              canManageUsers: false,
-                              canExportData: false,
+                            {
+                              id: "3",
+                              name: "用户3",
+                              email: "user3@example.com",
+                              role: "viewer",
+                              status: "pending",
+                              lastActive: new Date().toISOString(),
+                              permissions: {
+                                canCreateKb: false,
+                                canEditKb: false,
+                                canDeleteKb: false,
+                                canUploadDocs: false,
+                                canDeleteDocs: false,
+                                canManageUsers: false,
+                                canExportData: false,
+                              },
                             },
-                          },
-                        ]}
-                      />
-                    </LazyLoadWrapper>
-                  </Suspense>
-                </CardContent>
-              </Card>
+                          ]}
+                        />
+                      </LazyLoadWrapper>
+                    </Suspense>
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Popular Tags
-                  </CardTitle>
-                  <Tag className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    <li className="flex items-center justify-between">
-                      <span className="text-sm">AI</span>
-                      <span className="text-xs text-muted-foreground">245</span>
-                    </li>
-                    <li className="flex items-center justify-between">
-                      <span className="text-sm">Machine Learning</span>
-                      <span className="text-xs text-muted-foreground">189</span>
-                    </li>
-                    <li className="flex items-center justify-between">
-                      <span className="text-sm">Data Science</span>
-                      <span className="text-xs text-muted-foreground">156</span>
-                    </li>
-                    <li className="flex items-center justify-between">
-                      <span className="text-sm">Neural Networks</span>
-                      <span className="text-xs text-muted-foreground">132</span>
-                    </li>
-                    <li className="flex items-center justify-between">
-                      <span className="text-sm">Deep Learning</span>
-                      <span className="text-xs text-muted-foreground">98</span>
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      热门标签
+                    </CardTitle>
+                    <Tag className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <li className="flex items-center justify-between">
+                        <span className="text-sm">人工智能</span>
+                        <span className="text-xs text-muted-foreground">245</span>
+                      </li>
+                      <li className="flex items-center justify-between">
+                        <span className="text-sm">机器学习</span>
+                        <span className="text-xs text-muted-foreground">189</span>
+                      </li>
+                      <li className="flex items-center justify-between">
+                        <span className="text-sm">数据科学</span>
+                        <span className="text-xs text-muted-foreground">156</span>
+                      </li>
+                      <li className="flex items-center justify之间">
+                        <span className="text-sm">神经网络</span>
+                        <span className="text-xs text-muted-foreground">132</span>
+                      </li>
+                      <li className="flex items-center justify-between">
+                        <span className="text-sm">深度学习</span>
+                        <span className="text-xs text-muted-foreground">98</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Performance
-                  </CardTitle>
-                  <Zap className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Query Response Time</span>
-                        <span className="text-xs font-medium">245ms</span>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      性能指标
+                    </CardTitle>
+                    <Zap className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm">查询响应时间</span>
+                          <span className="text-xs font-medium">245ms</span>
+                        </div>
+                        <div className="h-1.5 w-full rounded-full bg-muted">
+                          <div className="h-1.5 w-1/3 rounded-full bg-primary"></div>
+                        </div>
                       </div>
-                      <div className="h-1.5 w-full rounded-full bg-muted">
-                        <div className="h-1.5 w-1/3 rounded-full bg-primary"></div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm">文档处理</span>
+                          <span className="text-xs font-medium">1.2s</span>
+                        </div>
+                        <div className="h-1.5 w-full rounded-full bg-muted">
+                          <div className="h-1.5 w-1/2 rounded-full bg-primary"></div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm">API 延迟</span>
+                          <span className="text-xs font-medium">89ms</span>
+                        </div>
+                        <div className="h-1.5 w-full rounded-full bg-muted">
+                          <div className="h-1.5 w-1/4 rounded-full bg-primary"></div>
+                        </div>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Document Processing</span>
-                        <span className="text-xs font-medium">1.2s</span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-muted">
-                        <div className="h-1.5 w-1/2 rounded-full bg-primary"></div>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">API Latency</span>
-                        <span className="text-xs font-medium">89ms</span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-muted">
-                        <div className="h-1.5 w-1/4 rounded-full bg-primary"></div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </AnimatedContainer>
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Advanced Analytics</CardTitle>
-                <CardDescription>
-                  Detailed analytics about your knowledge base usage.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Analytics content will be displayed here.</p>
-              </CardContent>
-            </Card>
+            <AnimatedContainer type="scale">
+              <Card>
+                <CardHeader>
+                  <CardTitle>高级分析</CardTitle>
+                  <CardDescription>
+                    关于您的知识库使用情况的详细分析
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>分析内容将显示在此处</p>
+                </CardContent>
+              </Card>
+            </AnimatedContainer>
           </TabsContent>
 
           <TabsContent value="activity" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>
-                  Your recent interactions with the knowledge base.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Activity log will be displayed here.</p>
-              </CardContent>
-            </Card>
+            <AnimatedContainer type="scale">
+              <Card>
+                <CardHeader>
+                  <CardTitle>近期活动</CardTitle>
+                  <CardDescription>
+                    您与知识库的最近互动
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>活动日志将显示在此处</p>
+                </CardContent>
+              </Card>
+            </AnimatedContainer>
           </TabsContent>
         </Tabs>
       </div>

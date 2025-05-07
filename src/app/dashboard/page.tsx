@@ -24,6 +24,9 @@ import {
   Clock,
 } from "lucide-react";
 import AnimatedContainer from "@/components/ui/animated-container";
+import { PageContainer, PageTitle, PageSection, PageGrid } from "@/components/layout/page-container";
+import { useTheme } from "@/components/theme-provider";
+import { cn } from "@/lib/utils";
 
 // 定义类型
 interface Query {
@@ -73,6 +76,9 @@ export default function DashboardPage() {
     recentDocuments: [],
     popularDocuments: [],
   });
+  
+  // 使用全局主题设置
+  const { theme, accentColor, animationsEnabled } = useTheme();
 
   useEffect(() => {
     // Simulate loading data
@@ -87,73 +93,73 @@ export default function DashboardPage() {
         recentQueries: [
           {
             id: 1,
-            text: "How does the knowledge retrieval system work?",
-            timestamp: "2 mins ago",
+            text: "知识检索系统是如何工作的？",
+            timestamp: "2 分钟前",
           },
           {
             id: 2,
-            text: "What are the best practices for document organization?",
-            timestamp: "15 mins ago",
+            text: "文档组织的最佳实践是什么？",
+            timestamp: "15 分钟前",
           },
           {
             id: 3,
-            text: "Can I integrate this with my existing CMS?",
-            timestamp: "1 hour ago",
+            text: "我可以将这个系统与现有的 CMS 集成吗？",
+            timestamp: "1 小时前",
           },
           {
             id: 4,
-            text: "How to optimize search performance?",
-            timestamp: "3 hours ago",
+            text: "如何优化搜索性能？",
+            timestamp: "3 小时前",
           },
           {
             id: 5,
-            text: "What file formats are supported?",
-            timestamp: "5 hours ago",
+            text: "支持哪些文件格式？",
+            timestamp: "5 小时前",
           },
         ],
         recentDocuments: [
           {
             id: 1,
-            name: "System Architecture.pdf",
+            name: "系统架构.pdf",
             size: "2.4 MB",
-            uploaded: "1 hour ago",
+            uploaded: "1 小时前",
             type: "PDF",
           },
           {
             id: 2,
-            name: "User Manual v2.1.docx",
+            name: "用户手册 v2.1.docx",
             size: "1.8 MB",
-            uploaded: "3 hours ago",
+            uploaded: "3 小时前",
             type: "DOCX",
           },
           {
             id: 3,
-            name: "API Documentation.md",
+            name: "API 文档.md",
             size: "0.5 MB",
-            uploaded: "5 hours ago",
+            uploaded: "5 小时前",
             type: "MD",
           },
           {
             id: 4,
-            name: "Implementation Guide.pdf",
+            name: "实施指南.pdf",
             size: "3.2 MB",
-            uploaded: "1 day ago",
+            uploaded: "1 天前",
             type: "PDF",
           },
           {
             id: 5,
-            name: "Release Notes.txt",
+            name: "发布说明.txt",
             size: "0.1 MB",
-            uploaded: "2 days ago",
+            uploaded: "2 天前",
             type: "TXT",
           },
         ],
         popularDocuments: [
-          { id: 1, name: "Getting Started Guide.pdf", views: 245, type: "PDF" },
-          { id: 2, name: "Troubleshooting.docx", views: 189, type: "DOCX" },
-          { id: 3, name: "FAQ.md", views: 156, type: "MD" },
-          { id: 4, name: "Best Practices.pdf", views: 132, type: "PDF" },
-          { id: 5, name: "Integration Examples.txt", views: 98, type: "TXT" },
+          { id: 1, name: "入门指南.pdf", views: 245, type: "PDF" },
+          { id: 2, name: "故障排除.docx", views: 189, type: "DOCX" },
+          { id: 3, name: "常见问题.md", views: 156, type: "MD" },
+          { id: 4, name: "最佳实践.pdf", views: 132, type: "PDF" },
+          { id: 5, name: "集成示例.txt", views: 98, type: "TXT" },
         ],
       });
       setIsLoading(false);
@@ -165,36 +171,50 @@ export default function DashboardPage() {
   const getDocumentBadgeColor = (type: string): string => {
     switch (type) {
       case "PDF":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+        return cn(
+          "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+          accentColor === "red" && "bg-red-200 dark:bg-red-800"
+        );
       case "DOCX":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+        return cn(
+          "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+          accentColor === "blue" && "bg-blue-200 dark:bg-blue-800"
+        );
       case "MD":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+        return cn(
+          "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+          accentColor === "purple" && "bg-purple-200 dark:bg-purple-800"
+        );
       case "TXT":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
+        return cn(
+          "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+        );
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
     }
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <AnimatedContainer>
-        <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+    <PageContainer>
+      <PageTitle 
+        title="仪表盘" 
+        description="欢迎使用AI知识检索仪表盘"
+      />
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-8">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="documents">Documents</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid grid-cols-3 mb-6">
+          <TabsTrigger value="overview">概览</TabsTrigger>
+          <TabsTrigger value="documents">文档</TabsTrigger>
+          <TabsTrigger value="analytics">分析</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
+        <TabsContent value="overview" className="space-y-6">
+          <PageSection animation={animationsEnabled ? "fade" : "none"} delay={0.1}>
+            <PageGrid columns={4}>
+              <Card className={cn(accentColor === "blue" && "border-blue-200 dark:border-blue-800")}>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Documents
+                    文档
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -202,35 +222,35 @@ export default function DashboardPage() {
                     <div className="text-2xl font-bold">
                       {isLoading ? "..." : stats.documentsCount}
                     </div>
-                    <FileText className="h-5 w-5 text-muted-foreground" />
+                    <FileText className={`h-5 w-5 text-${accentColor}-500 text-muted-foreground`} />
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Queries</CardTitle>
+                  <CardTitle className="text-sm font-medium">查询</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between">
                     <div className="text-2xl font-bold">
                       {isLoading ? "..." : stats.queriesCount}
                     </div>
-                    <Search className="h-5 w-5 text-muted-foreground" />
+                    <Search className={`h-5 w-5 text-${accentColor}-500 text-muted-foreground`} />
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Users</CardTitle>
+                  <CardTitle className="text-sm font-medium">用户</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between">
                     <div className="text-2xl font-bold">
                       {isLoading ? "..." : stats.usersCount}
                     </div>
-                    <Users className="h-5 w-5 text-muted-foreground" />
+                    <Users className={`h-5 w-5 text-${accentColor}-500 text-muted-foreground`} />
                   </div>
                 </CardContent>
               </Card>
@@ -238,7 +258,7 @@ export default function DashboardPage() {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Knowledge Bases
+                    知识库
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -246,40 +266,47 @@ export default function DashboardPage() {
                     <div className="text-2xl font-bold">
                       {isLoading ? "..." : stats.knowledgeBasesCount}
                     </div>
-                    <Database className="h-5 w-5 text-muted-foreground" />
+                    <Database className={`h-5 w-5 text-${accentColor}-500 text-muted-foreground`} />
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </PageGrid>
+          </PageSection>
 
+          <PageSection animation={animationsEnabled ? "slide" : "none"} delay={0.2}>
             <Card>
               <CardHeader>
-                <CardTitle>Storage Usage</CardTitle>
-                <CardDescription>Current storage utilization</CardDescription>
+                <CardTitle>存储使用情况</CardTitle>
+                <CardDescription>当前存储利用率</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Progress value={stats.storageUsed} className="h-2" />
+                  <Progress 
+                    value={stats.storageUsed} 
+                    className={`h-2 bg-${accentColor}-100 dark:bg-${accentColor}-900/20`} 
+                  />
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <div>{stats.storageUsed}% used</div>
+                    <div>{stats.storageUsed}% 已使用</div>
                     <div>
-                      {stats.storageUsed} GB of {stats.totalStorage} GB
+                      {stats.storageUsed} GB / {stats.totalStorage} GB
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
+          </PageSection>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <PageSection animation={animationsEnabled ? "fade" : "none"} delay={0.3}>
+            <PageGrid columns={2}>
               <Card className="col-span-1">
                 <CardHeader>
-                  <CardTitle>Recent Queries</CardTitle>
-                  <CardDescription>Latest search queries</CardDescription>
+                  <CardTitle>最近查询</CardTitle>
+                  <CardDescription>最新搜索查询</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {isLoading ? (
                     <div className="flex items-center justify-center h-40">
-                      <div className="animate-pulse">Loading...</div>
+                      <div className="animate-pulse">加载中...</div>
                     </div>
                   ) : (
                     <ScrollArea className="h-60">
@@ -290,7 +317,7 @@ export default function DashboardPage() {
                             className="flex justify-between items-start border-b pb-3"
                           >
                             <div className="flex items-start gap-2">
-                              <Search className="h-4 w-4 mt-1 text-muted-foreground" />
+                              <Search className={`h-4 w-4 mt-1 text-${accentColor}-500 text-muted-foreground`} />
                               <div>
                                 <p className="text-sm font-medium">
                                   {query.text}
@@ -311,13 +338,13 @@ export default function DashboardPage() {
 
               <Card className="col-span-1">
                 <CardHeader>
-                  <CardTitle>Recent Documents</CardTitle>
-                  <CardDescription>Latest uploaded documents</CardDescription>
+                  <CardTitle>最近文档</CardTitle>
+                  <CardDescription>最新上传的文档</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {isLoading ? (
                     <div className="flex items-center justify-center h-40">
-                      <div className="animate-pulse">Loading...</div>
+                      <div className="animate-pulse">加载中...</div>
                     </div>
                   ) : (
                     <ScrollArea className="h-60">
@@ -328,7 +355,7 @@ export default function DashboardPage() {
                             className="flex justify-between items-start border-b pb-3"
                           >
                             <div className="flex items-start gap-2">
-                              <FileText className="h-4 w-4 mt-1 text-muted-foreground" />
+                              <FileText className={`h-4 w-4 mt-1 text-${accentColor}-500 text-muted-foreground`} />
                               <div>
                                 <p className="text-sm font-medium">
                                   {doc.name}
@@ -357,19 +384,17 @@ export default function DashboardPage() {
                   )}
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
+            </PageGrid>
+          </PageSection>
+        </TabsContent>
 
-          <TabsContent value="documents" className="space-y-6">
+        <TabsContent value="documents" className="space-y-6">
+          <PageSection title="热门文档" description="最常查看的文档" animation={animationsEnabled ? "fade" : "none"}>
             <Card>
-              <CardHeader>
-                <CardTitle>Popular Documents</CardTitle>
-                <CardDescription>Most viewed documents</CardDescription>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {isLoading ? (
                   <div className="flex items-center justify-center h-40">
-                    <div className="animate-pulse">Loading...</div>
+                    <div className="animate-pulse">加载中...</div>
                   </div>
                 ) : (
                   <ScrollArea className="h-[400px]">
@@ -380,7 +405,7 @@ export default function DashboardPage() {
                           className="flex justify-between items-start border-b pb-3"
                         >
                           <div className="flex items-start gap-2">
-                            <FileText className="h-4 w-4 mt-1 text-muted-foreground" />
+                            <FileText className={`h-4 w-4 mt-1 text-${accentColor}-500 text-muted-foreground`} />
                             <div>
                               <p className="text-sm font-medium">{doc.name}</p>
                             </div>
@@ -394,7 +419,7 @@ export default function DashboardPage() {
                               {doc.type}
                             </Badge>
                             <span className="text-xs text-muted-foreground">
-                              {doc.views} views
+                              {doc.views} 次查看
                             </span>
                           </div>
                         </div>
@@ -404,65 +429,71 @@ export default function DashboardPage() {
                 )}
               </CardContent>
             </Card>
+          </PageSection>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <PageSection animation={animationsEnabled ? "fade" : "none"} delay={0.2}>
+            <PageGrid columns={2}>
               <Card>
                 <CardHeader>
-                  <CardTitle>Document Types</CardTitle>
-                  <CardDescription>Distribution by file format</CardDescription>
+                  <CardTitle>文档类型</CardTitle>
+                  <CardDescription>按文件格式分布</CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center items-center h-60">
-                  <PieChart className="h-40 w-40 text-muted-foreground" />
+                  <PieChart className={`h-40 w-40 text-${accentColor}-500 text-muted-foreground`} />
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Document Sizes</CardTitle>
-                  <CardDescription>Distribution by file size</CardDescription>
+                  <CardTitle>文档大小</CardTitle>
+                  <CardDescription>按文件大小分布</CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center items-center h-60">
-                  <BarChart className="h-40 w-40 text-muted-foreground" />
+                  <BarChart className={`h-40 w-40 text-${accentColor}-500 text-muted-foreground`} />
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
+            </PageGrid>
+          </PageSection>
+        </TabsContent>
 
-          <TabsContent value="analytics" className="space-y-6">
+        <TabsContent value="analytics" className="space-y-6">
+          <PageSection animation={animationsEnabled ? "fade" : "none"}>
             <Card>
               <CardHeader>
-                <CardTitle>Query Activity</CardTitle>
-                <CardDescription>Queries over time</CardDescription>
+                <CardTitle>查询活动</CardTitle>
+                <CardDescription>随时间的查询情况</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center items-center h-80">
-                <LineChart className="h-60 w-60 text-muted-foreground" />
+                <LineChart className={`h-60 w-60 text-${accentColor}-500 text-muted-foreground`} />
               </CardContent>
             </Card>
+          </PageSection>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <PageSection animation={animationsEnabled ? "fade" : "none"} delay={0.2}>
+            <PageGrid columns={2}>
               <Card>
                 <CardHeader>
-                  <CardTitle>User Activity</CardTitle>
-                  <CardDescription>Active users over time</CardDescription>
+                  <CardTitle>用户活动</CardTitle>
+                  <CardDescription>随时间的活跃用户</CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center items-center h-60">
-                  <Activity className="h-40 w-40 text-muted-foreground" />
+                  <Activity className={`h-40 w-40 text-${accentColor}-500 text-muted-foreground`} />
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Response Times</CardTitle>
-                  <CardDescription>Average query response time</CardDescription>
+                  <CardTitle>响应时间</CardTitle>
+                  <CardDescription>平均查询响应时间</CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center items-center h-60">
-                  <BarChart className="h-40 w-40 text-muted-foreground" />
+                  <BarChart className={`h-40 w-40 text-${accentColor}-500 text-muted-foreground`} />
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </AnimatedContainer>
-    </div>
+            </PageGrid>
+          </PageSection>
+        </TabsContent>
+      </Tabs>
+    </PageContainer>
   );
 }

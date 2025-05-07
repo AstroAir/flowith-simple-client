@@ -28,6 +28,7 @@ import {
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useTheme } from "@/components/theme-provider";
 import AnimatedContainer from "@/components/ui/animated-container";
+import { PageContainer, PageTitle, PageSection } from "@/components/layout/page-container";
 import type { ConversationSession, Message } from "@/lib/types";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -91,8 +92,8 @@ export default function HistoryPage() {
     setSessions(sessions.filter((session) => session.id !== sessionId));
     setSelectedSessions(selectedSessions.filter((id) => id !== sessionId));
 
-    toast("Session deleted", {
-      description: "The conversation has been deleted.",
+    toast("会话已删除", {
+      description: "对话已被删除。",
     });
   };
 
@@ -102,8 +103,8 @@ export default function HistoryPage() {
     );
     setSelectedSessions([]);
 
-    toast("Sessions deleted", {
-      description: `${selectedSessions.length} conversations have been deleted.`,
+    toast("会话已删除", {
+      description: `${selectedSessions.length} 个对话已被删除。`,
     });
   };
 
@@ -128,15 +129,14 @@ export default function HistoryPage() {
   const copySessionContent = (session: ConversationSession) => {
     const content = session.messages
       .map(
-        (msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
+        (msg) => `${msg.role === "user" ? "用户" : "助手"}: ${msg.content}`
       )
       .join("\n\n");
 
     navigator.clipboard.writeText(content);
 
-    toast("Copied to clipboard", {
-      description:
-        "The conversation content has been copied to your clipboard.",
+    toast("已复制到剪贴板", {
+      description: "对话内容已复制到剪贴板。",
     });
   };
 
@@ -165,19 +165,18 @@ export default function HistoryPage() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    toast("Session exported", {
-      description: "The conversation has been exported as JSON.",
+    toast("会话已导出", {
+      description: "对话已导出为JSON文件。",
     });
   };
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">
-            Conversation History
-          </h1>
-          <div className="flex items-center gap-2">
+    <PageContainer>
+      <PageTitle 
+        title="对话历史" 
+        description="查看和管理所有过去的对话"
+        actions={
+          <>
             {selectedSessions.length > 0 && (
               <Button
                 variant="destructive"
@@ -185,24 +184,26 @@ export default function HistoryPage() {
                 onClick={deleteSelectedSessions}
               >
                 <Trash2 className="h-4 w-4 mr-1" />
-                Delete Selected
+                删除选中项
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={selectAllSessions}>
               {selectedSessions.length === sortedSessions.length
-                ? "Deselect All"
-                : "Select All"}
+                ? "取消全选"
+                : "全选"}
             </Button>
-          </div>
-        </div>
+          </>
+        }
+      />
 
+      <PageSection>
         <Card>
           <CardHeader className="pb-2">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search conversations..."
+                placeholder="搜索对话..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8"
@@ -216,26 +217,28 @@ export default function HistoryPage() {
               onValueChange={setActiveTab}
             >
               <TabsList>
-                <TabsTrigger value="all">All Time</TabsTrigger>
-                <TabsTrigger value="today">Today</TabsTrigger>
-                <TabsTrigger value="week">This Week</TabsTrigger>
-                <TabsTrigger value="month">This Month</TabsTrigger>
+                <TabsTrigger value="all">所有时间</TabsTrigger>
+                <TabsTrigger value="today">今天</TabsTrigger>
+                <TabsTrigger value="week">本周</TabsTrigger>
+                <TabsTrigger value="month">本月</TabsTrigger>
               </TabsList>
             </Tabs>
           </CardContent>
           <CardFooter className="pt-0 text-sm text-muted-foreground">
-            {sortedSessions.length} conversations found
+            找到 {sortedSessions.length} 个对话
           </CardFooter>
         </Card>
+      </PageSection>
 
+      <PageSection noPadding animation="fade">
         {sortedSessions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <MessageSquare className="h-16 w-16 text-muted-foreground mb-4 opacity-20" />
-            <h3 className="text-xl font-medium mb-2">No conversations found</h3>
+            <h3 className="text-xl font-medium mb-2">未找到对话</h3>
             <p className="text-muted-foreground max-w-md">
               {searchQuery
-                ? "Try adjusting your search query to find what you're looking for."
-                : "Start a new conversation to see it in your history."}
+                ? "尝试调整您的搜索查询以找到您要查找的内容。"
+                : "开始一个新的对话，它将显示在您的历史记录中。"}
             </p>
           </div>
         ) : (
@@ -260,10 +263,10 @@ export default function HistoryPage() {
                           <Clock className="h-3 w-3 mr-1" />
                           {format(
                             new Date(session.updatedAt),
-                            "MMM d, yyyy h:mm a"
+                            "yyyy年M月d日 HH:mm"
                           )}
                           <span className="mx-2">•</span>
-                          {session.messages.length} messages
+                          {session.messages.length} 条消息
                         </CardDescription>
                       </div>
                       <div className="flex items-center">
@@ -295,17 +298,17 @@ export default function HistoryPage() {
                               onClick={() => copySessionContent(session)}
                             >
                               <Copy className="h-4 w-4 mr-2" />
-                              Copy Content
+                              复制内容
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => exportSession(session)}
                             >
                               <Download className="h-4 w-4 mr-2" />
-                              Export
+                              导出
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                               <Share2 className="h-4 w-4 mr-2" />
-                              Share
+                              分享
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -313,7 +316,7 @@ export default function HistoryPage() {
                               onClick={() => deleteSession(session.id)}
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
+                              删除
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -324,7 +327,7 @@ export default function HistoryPage() {
                     <div className="text-sm text-muted-foreground line-clamp-2">
                       {session.messages.length > 0
                         ? session.messages[session.messages.length - 1].content
-                        : "No messages"}
+                        : "无消息"}
                     </div>
                   </CardContent>
                   <CardFooter className="p-4 pt-0 flex justify-between">
@@ -338,11 +341,11 @@ export default function HistoryPage() {
                       }
                     >
                       {expandedSession === session.id
-                        ? "Hide Messages"
-                        : "View Messages"}
+                        ? "隐藏消息"
+                        : "查看消息"}
                     </Button>
                     <Button variant="outline" size="sm">
-                      Continue Conversation
+                      继续对话
                     </Button>
                   </CardFooter>
                   {expandedSession === session.id && (
@@ -357,7 +360,7 @@ export default function HistoryPage() {
                               <div className="flex items-center mb-1">
                                 <Bot className="h-4 w-4 mr-2" />
                                 <span className="text-xs font-medium uppercase">
-                                  Response
+                                  回复
                                 </span>
                               </div>
                               <p className="text-sm whitespace-pre-wrap">
@@ -374,8 +377,8 @@ export default function HistoryPage() {
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </PageSection>
+    </PageContainer>
   );
 }
 
@@ -401,7 +404,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
           <Bot className="h-4 w-4 mr-2" />
         )}
         <span className="text-xs font-medium uppercase">
-          {message.role === "user" ? "User" : "Assistant"}
+          {message.role === "user" ? "用户" : "助手"}
         </span>
       </div>
       <p className="text-sm whitespace-pre-wrap">{message.content}</p>

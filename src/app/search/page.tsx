@@ -34,6 +34,7 @@ import {
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useTheme } from "@/components/theme-provider";
 import AnimatedContainer from "@/components/ui/animated-container";
+import { PageContainer, PageTitle, PageSection } from "@/components/layout/page-container";
 import type { UploadedDocument } from "@/components/document-uploader";
 import type { ConversationSession } from "@/lib/types";
 import { format } from "date-fns";
@@ -300,29 +301,30 @@ export default function AdvancedSearchPage() {
   };
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">Advanced Search</h1>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={clearSearch}>
-              Clear
-            </Button>
-          </div>
-        </div>
+    <PageContainer>
+      <PageTitle 
+        title="高级搜索" 
+        description="在文档和会话中搜索信息"
+        actions={
+          <Button variant="outline" onClick={clearSearch}>
+            清除
+          </Button>
+        }
+      />
 
+      <PageSection noPadding>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Search Filters */}
           <Card className="md:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Filter className="h-5 w-5 mr-2" />
-                Search Filters
+                搜索过滤器
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Content Type</Label>
+                <Label className="text-sm font-medium">内容类型</Label>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -344,7 +346,7 @@ export default function AdvancedSearchPage() {
                       }}
                     />
                     <Label htmlFor="documents" className="text-sm">
-                      Documents
+                      文档
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -367,18 +369,18 @@ export default function AdvancedSearchPage() {
                       }}
                     />
                     <Label htmlFor="sessions" className="text-sm">
-                      Sessions
+                      会话
                     </Label>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Date Range</Label>
+                <Label className="text-sm font-medium">日期范围</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
                     <Label htmlFor="from-date" className="text-xs">
-                      From
+                      从
                     </Label>
                     <Input
                       id="from-date"
@@ -395,7 +397,7 @@ export default function AdvancedSearchPage() {
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="to-date" className="text-xs">
-                      To
+                      至
                     </Label>
                     <Input
                       id="to-date"
@@ -414,12 +416,12 @@ export default function AdvancedSearchPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Tags</Label>
+                <Label className="text-sm font-medium">标签</Label>
                 <ScrollArea className="h-32 border rounded-md p-2">
                   <div className="space-y-2">
                     {allTags.length === 0 ? (
                       <p className="text-xs text-muted-foreground">
-                        No tags available
+                        没有可用标签
                       </p>
                     ) : (
                       allTags.map((tag) => (
@@ -448,29 +450,34 @@ export default function AdvancedSearchPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Document Status</Label>
+                <Label className="text-sm font-medium">文档状态</Label>
                 <div className="space-y-2">
-                  {["ready", "processing", "uploading", "error"].map(
+                  {[
+                    { id: "ready", label: "就绪" },
+                    { id: "processing", label: "处理中" },
+                    { id: "uploading", label: "上传中" },
+                    { id: "error", label: "错误" }
+                  ].map(
                     (status) => (
-                      <div key={status} className="flex items-center space-x-2">
+                      <div key={status.id} className="flex items-center space-x-2">
                         <Checkbox
-                          id={`status-${status}`}
-                          checked={statusFilter.includes(status)}
+                          id={`status-${status.id}`}
+                          checked={statusFilter.includes(status.id)}
                           onCheckedChange={(checked) => {
                             if (checked) {
-                              setStatusFilter([...statusFilter, status]);
+                              setStatusFilter([...statusFilter, status.id]);
                             } else {
                               setStatusFilter(
-                                statusFilter.filter((s) => s !== status)
+                                statusFilter.filter((s) => s !== status.id)
                               );
                             }
                           }}
                         />
                         <Label
-                          htmlFor={`status-${status}`}
+                          htmlFor={`status-${status.id}`}
                           className="text-sm capitalize"
                         >
-                          {status}
+                          {status.label}
                         </Label>
                       </div>
                     )
@@ -481,7 +488,7 @@ export default function AdvancedSearchPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label className="text-sm font-medium">
-                    Relevance Threshold
+                    相关性阈值
                   </Label>
                   <span className="text-xs">{relevanceThreshold}%</span>
                 </div>
@@ -497,10 +504,10 @@ export default function AdvancedSearchPage() {
               <Separator />
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Save Search</Label>
+                <Label className="text-sm font-medium">保存搜索</Label>
                 <div className="flex space-x-2">
                   <Input
-                    placeholder="Search name"
+                    placeholder="搜索名称"
                     value={newSearchName}
                     onChange={(e) => setNewSearchName(e.target.value)}
                     className="h-9"
@@ -511,7 +518,7 @@ export default function AdvancedSearchPage() {
                     disabled={!newSearchName.trim()}
                   >
                     <Save className="h-4 w-4 mr-1" />
-                    Save
+                    保存
                   </Button>
                 </div>
               </div>
@@ -526,7 +533,7 @@ export default function AdvancedSearchPage() {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Search documents and sessions..."
+                    placeholder="搜索文档和会话..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-8"
@@ -540,17 +547,17 @@ export default function AdvancedSearchPage() {
                   onValueChange={setActiveTab}
                 >
                   <TabsList>
-                    <TabsTrigger value="all">All Results</TabsTrigger>
-                    <TabsTrigger value="documents">Documents</TabsTrigger>
-                    <TabsTrigger value="sessions">Sessions</TabsTrigger>
+                    <TabsTrigger value="all">所有结果</TabsTrigger>
+                    <TabsTrigger value="documents">文档</TabsTrigger>
+                    <TabsTrigger value="sessions">会话</TabsTrigger>
                   </TabsList>
                 </Tabs>
               </CardContent>
               <CardFooter className="pt-0 flex justify-between text-sm text-muted-foreground">
                 <div>
                   {isSearching
-                    ? "Searching..."
-                    : `${searchResults.length} results found`}
+                    ? "搜索中..."
+                    : `找到 ${searchResults.length} 个结果`}
                 </div>
                 <div className="flex items-center space-x-2">
                   <Button
@@ -559,7 +566,7 @@ export default function AdvancedSearchPage() {
                     className="h-7 px-2 text-xs"
                   >
                     <Download className="h-3 w-3 mr-1" />
-                    Export
+                    导出
                   </Button>
                   <Button
                     variant="ghost"
@@ -567,7 +574,7 @@ export default function AdvancedSearchPage() {
                     className="h-7 px-2 text-xs"
                   >
                     <Share2 className="h-3 w-3 mr-1" />
-                    Share
+                    分享
                   </Button>
                 </div>
               </CardFooter>
@@ -579,7 +586,7 @@ export default function AdvancedSearchPage() {
                 <CardHeader className="py-3">
                   <CardTitle className="text-sm flex items-center">
                     <Clock className="h-4 w-4 mr-2" />
-                    Saved Searches
+                    已保存的搜索
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="py-0">
@@ -598,8 +605,8 @@ export default function AdvancedSearchPage() {
                                 {search.name}
                               </div>
                               <div className="text-xs text-muted-foreground truncate max-w-md">
-                                {search.query || "(No query)"} •{" "}
-                                {format(search.createdAt, "MMM d, yyyy")}
+                                {search.query || "(无查询)"} •{" "}
+                                {format(search.createdAt, "yyyy年M月d日")}
                               </div>
                             </div>
                           </div>
@@ -630,10 +637,9 @@ export default function AdvancedSearchPage() {
             ) : searchResults.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <Search className="h-16 w-16 text-muted-foreground mb-4 opacity-20" />
-                <h3 className="text-xl font-medium mb-2">No results found</h3>
+                <h3 className="text-xl font-medium mb-2">未找到结果</h3>
                 <p className="text-muted-foreground max-w-md">
-                  Try adjusting your search query or filters to find what you're
-                  looking for.
+                  尝试调整您的搜索查询或过滤器，以找到您要查找的内容。
                 </p>
               </div>
             ) : (
@@ -669,12 +675,12 @@ export default function AdvancedSearchPage() {
                                     ? result.timestamp
                                     : result.updatedAt
                                 ),
-                                "MMM d, yyyy"
+                                "yyyy年M月d日"
                               )}
                               {"size" in result && (
                                 <>
                                   <span className="mx-2">•</span>
-                                  {result.size} bytes
+                                  {result.size} 字节
                                 </>
                               )}
                             </CardDescription>
@@ -692,14 +698,20 @@ export default function AdvancedSearchPage() {
                                   : "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
                               }`}
                             >
-                              {result.status}
+                              {result.status === "ready" 
+                                ? "就绪" 
+                                : result.status === "processing" 
+                                  ? "处理中"
+                                  : result.status === "uploading"
+                                    ? "上传中"
+                                    : "错误"}
                             </Badge>
                           ) : (
                             <Badge
                               variant="outline"
                               className="bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300"
                             >
-                              {result.messages.length} messages
+                              {result.messages.length} 条消息
                             </Badge>
                           )}
                         </div>
@@ -730,13 +742,13 @@ export default function AdvancedSearchPage() {
                           </div>
                         ) : (
                           <div className="text-xs text-muted-foreground">
-                            No additional information
+                            无附加信息
                           </div>
                         )}
                       </CardContent>
                       <CardFooter className="p-4 pt-0 flex justify-end">
                         <Button variant="outline" size="sm">
-                          View Details
+                          查看详情
                         </Button>
                       </CardFooter>
                     </Card>
@@ -746,7 +758,7 @@ export default function AdvancedSearchPage() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </PageSection>
+    </PageContainer>
   );
 }
